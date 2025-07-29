@@ -609,3 +609,21 @@ func (cs *checkout) getIntFeatureFlag(ctx context.Context, featureFlagName strin
 
 	return int(featureFlagValue)
 }
+
+func (cs *checkout) GetFeatureFlagValue(ctx context.Context, featureFlagName string) (int, error) {
+	client := openfeature.NewClient("checkout")
+
+	// Default value is set to 0, but you could also make this a parameter.
+	featureFlagValue, err := client.IntValue(
+		ctx,
+		featureFlagName,
+		0,
+		openfeature.EvaluationContext{},
+	)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to get feature flag value: %w", err)
+	}
+
+	return int(featureFlagValue), nil
+}
